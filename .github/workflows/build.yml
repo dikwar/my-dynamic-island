@@ -1,0 +1,31 @@
+name: Build Aplikasi Windows (.exe)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build_windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Ambil Kode dari Repository
+        uses: actions/checkout@v4
+
+      - name: Pasang Node.js di Server GitHub
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Electron & Bahan-bahan
+        run: npm install
+
+      - name: Rakit Menjadi File .EXE
+        run: npm run pack
+
+      - name: Siapkan File .EXE untuk Didownload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Aplikasi-Dynamic-Island-Windows
+          path: dist/*.exe

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<style>
+  * {
+    box-sizing: border-box;
+    user-select: none;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
+  }
+
+  /* Pembungkus Utama + Efek Glow (Cahaya di bawah Poni) */
+  .island-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding-top: 0;
+  }
+
+  /* Cahaya Neon (Glow) persis seperti di gambar */
+  .glow {
+    position: absolute;
+    top: -4px;
+    width: 170px;
+    height: 38px;
+    background: linear-gradient(90deg, #38ef7d, #00f2fe, #a18cd1, #fbc2eb);
+    background-size: 200% 200%;
+    animation: gradientFlow 4s ease infinite;
+    filter: blur(10px);
+    opacity: 0.85;
+    border-radius: 0 0 24px 24px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1;
+  }
+
+  @keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Bentuk Kapsul Hitam (Notch) */
+  .notch {
+    position: relative;
+    z-index: 2;
+    width: 165px;
+    height: 32px;
+    background: #0c0c0e;
+    border-radius: 0 0 18px 18px;
+    display: flex;
+     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: inset 0 -1px 2px rgba(255, 255, 255, 0.15);
+    overflow: hidden;
+  }
+
+  /* Saat Mouse Menyentuh Kapsul (Melebar) */
+  .island-wrapper:hover .notch {
+    width: 310px;
+    height: 92px;
+    border-radius: 0 0 26px 26px;
+  }
+
+  .island-wrapper:hover .glow {
+    width: 320px;
+    height: 98px;
+    filter: blur(14px);
+    opacity: 0.95;
+  }
+
+  /* Wadah Mata */
+  .eyes-box {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    transition: transform 0.2s ease;
+  }
+
+  /* Desain Mata Lucu (Kuning Bercahaya) */
+  .eye {
+    width: 14px;
+    height: 9px;
+    background: #ffe066;
+    border-radius: 10px;
+    box-shadow: 0 0 8px #ffd43b, 0 0 14px rgba(255, 212, 59, 0.6);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    animation: autoBlink 4.5s infinite;
+  }
+
+  /* Saat di-hover, mata jadi lebih besar dan ekspresif */
+  .island-wrapper:hover .eye {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff3bf;
+  }
+
+  /* Pupil di dalam mata (muncul saat di-hover) */
+  .eye::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #1a1a1a;
+    border-radius: 50%;
+    top: 4px;
+    left: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .island-wrapper:hover .eye::after {
+    opacity: 1;
+  }
+
+  /* Mode Ekspresi Senang (^ ^) saat diklik */
+  .notch.happy .eye {
+    height: 10px !important;
+    width: 20px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-top: 4px solid #ffe066;
+    border-radius: 50% 50% 0 0 !important;
+  }
+  .notch.happy .eye::after {
+    display: none;
+  }
+
+  /*Mode Ekspresi Love/Pink */
+  .notch.love .eye {
+    background: #ff6b8b !important;
+    box-shadow: 0 0 10px #ff6b8b !important;
+  }
+
+  /* Animasi Kedip Otomatis */
+  @keyframes autoBlink {
+    0%, 92%, 96%, 100% { transform: scaleY(1); }
+    94% { transform: scaleY(0.1); }
+  }
+
+  /* Menu Tambahan yang Muncul Saat Kapsul Melebar */
+  .extra-info {
+    opacity: 0;
+    max-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 85%;
+    margin-top: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    color: white;
+    font-size: 12px;
+  }
+
+  .island-wrapper:hover .extra-info {
+    opacity: 1;
+    max-height: 40px;
+    margin-top: 12px;
+    pointer-events: auto;
+  }
+
+  .clock {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #e0e0e0;
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 6px;
+  }
+
+  .mini-btn {
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .mini-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+</style>
+</head>
+<body>
+
+  <div class="island-wrapper" id="island">
+    <!-- Efek Glow di belakang -->
+    <div class="glow"></div>
+
+    <!-- Kapsul Utama -->
+    <div class="notch" id="notch">
+      <!-- Mata Lucu -->
+      <div class="eyes-box" id="eyesBox">
+        <div class="eye"></div>
+        <div class="eye"></div>
+      </div>
+
+      <!-- Konten yang muncul saat disentuh mouse -->
+      <div class="extra-info">
+        <span class="clock" id="clock">00:00</span>
+        <div class="btn-group">
+          <button class="mini-btn" id="moodBtn" title="Ganti Ekspresi">😊 Mood</button>
+          <button class="mini-btn" id="closeBtn" title="Tutup Aplikasi">✕</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+    const island = document.getElementById('island');
+    const notch = document.getElementById('notch');
+    const eyesBox = document.getElementById('eyesBox');
+    const clockEl = document.getElementById('clock');
+    const moodBtn = document.getElementById('moodBtn');
+    const closeBtn = document.getElementById('closeBtn');
+
+    // 1. Mengatur agar area di luar kapsul bisa ditembus klik mouse
+    island.addEventListener('mouseenter', () => {
+      ipcRenderer.send('set-ignore-mouse', false);
+    });
+    island.addEventListener('mouseleave', () => {
+      ipcRenderer.send('set-ignore-mouse', true);
+      eyesBox.style.transform = `translate(0px, 0px)`; // Reset lirikan mata
+    });
+
+    // 2. Mata melirik mengikuti gerakan mouse saat di dekat kapsul
+    document.addEventListener('mousemove', (e) => {
+      const rect = notch.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const deltaX = Math.max(-10, Math.min(10, (e.clientX - centerX) / 10));
+      const deltaY = Math.max(-5, Math.min(5, (e.clientY - centerY) / 10));
+
+      eyesBox.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    });
+
+    // 3. Animasi melirik otomatis secara acak saat sedang diam (Idle)
+    setInterval(() => {
+      if (!island.matches(':hover')) {
+        const randomX = (Math.random() - 0.5) * 14; // Melirik kiri/kanan acak
+        eyesBox.style.transform = `translate(${randomX}px, 0px)`;
+        setTimeout(() => {
+          if (!island.matches(':hover')) {
+            eyesBox.style.transform = `translate(0px, 0px)`;
+          }
+        }, 1200);
+      }
+    }, 5000);
+
+    // 4. Ganti ekspresi mata (Normal -> Senyum ^ ^ -> Pink)
+    let moodIndex = 0;
+    const moods = ['', 'happy', 'love'];
+    moodBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      moodIndex = (moodIndex + 1) % moods.length;
+      notch.className = 'notch ' + moods[moodIndex];
+    });
+
+    // Klik langsung pada kapsul untuk mengelus/membuat matanya senyum sebentar
+    notch.addEventListener('click', () => {
+      notch.classList.add('happy');
+      setTimeout(() => {
+        if (moods[moodIndex] !== 'happy') {
+          notch.classList.remove('happy');
+        }
+      }, 1000);
+    });
+
+    // 5. Tombol tutup aplikasi
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      window.close();
+    });
+
+    // 6. Update Jam Digital
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      clockEl.textContent = `${hours}:${minutes}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>

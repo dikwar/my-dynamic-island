@@ -6,6 +6,7 @@
   * {
     box-sizing: border-box;
     user-select: none;
+    font-family: 'Segoe UI', system-ui, sans-serif;
   }
 
   body {
@@ -16,31 +17,29 @@
     justify-content: center;
     align-items: flex-start;
     height: 100vh;
-    font-family: 'Segoe UI', sans-serif;
     overflow: hidden;
   }
 
-  /* Pembungkus Utama + Efek Glow (Cahaya di bawah Poni) */
   .island-wrapper {
     position: relative;
     display: flex;
-    justify-content: center;
-    padding-top: 0;
+    flex-direction: column;
+    align-items: center;
   }
 
-  /* Cahaya Neon (Glow) persis seperti di gambar */
+  /* Efek Glow Neon */
   .glow {
     position: absolute;
-    top: -4px;
-    width: 170px;
+    top: -5px;
+    width: 225px;
     height: 38px;
-    background: linear-gradient(90deg, #38ef7d, #00f2fe, #a18cd1, #fbc2eb);
-    background-size: 200% 200%;
-    animation: gradientFlow 4s ease infinite;
-    filter: blur(10px);
+    background: linear-gradient(90deg, #00f2fe, #4facfe, #a18cd1, #ff6b8b, #38ef7d);
+    background-size: 300% 300%;
+    animation: gradientFlow 5s ease infinite;
+    filter: blur(12px);
     opacity: 0.85;
     border-radius: 0 0 24px 24px;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.1);
     z-index: 1;
   }
 
@@ -50,180 +49,385 @@
     100% { background-position: 0% 50%; }
   }
 
-  /* Bentuk Kapsul Hitam (Notch) */
+  /* Kapsul Hitam Utama */
   .notch {
     position: relative;
     z-index: 2;
-    width: 165px;
-    height: 32px;
-    background: #0c0c0e;
-    border-radius: 0 0 18px 18px;
+    width: 220px;
+    height: 36px;
+    background: #0b0b0e;
+    border-radius: 0 0 20px 20px;
     display: flex;
-     flex-direction: column;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: inset 0 -1px 2px rgba(255, 255, 255, 0.15);
+    padding: 6px 14px;
+    transition: all 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+    box-shadow: inset 0 -1px 2px rgba(255, 255, 255, 0.2), 0 8px 24px rgba(0,0,0,0.6);
     overflow: hidden;
+    color: #fff;
   }
 
-  /* Saat Mouse Menyentuh Kapsul (Melebar) */
-  .island-wrapper:hover .notch {
-    width: 310px;
-    height: 92px;
-    border-radius: 0 0 26px 26px;
+  /* Saat kapsul sedang berbicara (ada dialog), sedikit melebar */
+  .island-wrapper.speaking .notch {
+    width: 280px;
+    height: 62px;
+  }
+  .island-wrapper.speaking .glow {
+    width: 290px;
+    height: 68px;
   }
 
-  .island-wrapper:hover .glow {
-    width: 320px;
-    height: 98px;
-    filter: blur(14px);
+  /* Ukuran Kapsul Saat Disentuh Mouse (Expanded) */
+  .island-wrapper:hover .notch,
+  .island-wrapper.pinned .notch {
+    width: 440px;
+    height: 295px;
+    border-radius: 0 0 28px 28px;
+    padding: 12px 18px;
+  }
+
+  .island-wrapper:hover .glow,
+  .island-wrapper.pinned .glow {
+    width: 450px;
+    height: 302px;
+    filter: blur(16px);
     opacity: 0.95;
   }
 
-  /* Wadah Mata */
+  /* BARIS ATAS: Jam | Mata Lucu | Baterai & Status */
+  .top-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 24px;
+  }
+
+  .mini-left, .mini-right {
+    font-size: 11px;
+    font-weight: 600;
+    color: #bbb;
+    min-width: 58px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .mini-right { justify-content: flex-end; color: #38ef7d; }
+
+  /* Gelembung Teks Bicara (Speech Bubble) */
+  .speech-bubble {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #ffe066;
+    text-align: center;
+    margin-top: 4px;
+    opacity: 0;
+    max-height: 0;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+  .island-wrapper.speaking .speech-bubble,
+  .island-wrapper:hover .speech-bubble,
+  .island-wrapper.pinned .speech-bubble {
+    opacity: 1;
+    max-height: 24px;
+  }
+
+  /* WADAH MATA EKSPRESIF */
   .eyes-box {
     display: flex;
-    gap: 18px;
+    gap: 16px;
     align-items: center;
     justify-content: center;
-    margin-top: 2px;
-    transition: transform 0.2s ease;
+    transition: transform 0.15s ease;
+    cursor: pointer;
+    padding: 2px 6px;
   }
 
-  /* Desain Mata Lucu (Kuning Bercahaya) */
   .eye {
-    width: 14px;
-    height: 9px;
+    width: 15px;
+    height: 10px;
     background: #ffe066;
     border-radius: 10px;
-    box-shadow: 0 0 8px #ffd43b, 0 0 14px rgba(255, 212, 59, 0.6);
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 8px #ffd43b, 0 0 14px rgba(255, 212, 59, 0.7);
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
     position: relative;
-    animation: autoBlink 4.5s infinite;
+    animation: autoBlink 4.2s infinite;
   }
 
-  /* Saat di-hover, mata jadi lebih besar dan ekspresif */
-  .island-wrapper:hover .eye {
-    width: 22px;
-    height: 22px;
+  .island-wrapper:hover .eye,
+  .island-wrapper.pinned .eye {
+    width: 19px;
+    height: 19px;
     border-radius: 50%;
-    background: #fff3bf;
   }
 
-  /* Pupil di dalam mata (muncul saat di-hover) */
+  /* Pupil Mata */
   .eye::after {
     content: '';
     position: absolute;
-    width: 8px;
-    height: 8px;
-    background: #1a1a1a;
+    width: 6px;
+    height: 6px;
+    background: #111;
     border-radius: 50%;
     top: 4px;
     left: 4px;
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: 0.2s;
   }
+  .island-wrapper:hover .eye::after,
+  .island-wrapper.pinned .eye::after { opacity: 1; }
 
-  .island-wrapper:hover .eye::after {
-    opacity: 1;
-  }
-
-  /* Mode Ekspresi Senang (^ ^) saat diklik */
+  /* --- VARIASI EKSPRESI MATA --- */
+  /* 1. Senang (^ ^) */
   .notch.happy .eye {
-    height: 10px !important;
-    width: 20px !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    border-top: 4px solid #ffe066;
-    border-radius: 50% 50% 0 0 !important;
+    height: 9px !important; width: 18px !important;
+    background: transparent !important; box-shadow: none !important;
+    border-top: 3.5px solid #ffe066; border-radius: 50% 50% 0 0 !important;
   }
-  .notch.happy .eye::after {
-    display: none;
+  .notch.happy .eye::after { display: none; }
+
+  /* 2. Kedip Sebelah / Wink (; O) */
+  .notch.wink .eye:first-child {
+    height: 3px !important; width: 16px !important;
+    border-radius: 4px !important;
+  }
+  .notch.wink .eye:first-child::after { display: none; }
+
+  /* 3. Kaget / Shock (O O) */
+  .notch.shock .eye {
+    width: 20px !important; height: 20px !important;
+    border-radius: 50% !important; background: #fff !important;
+    box-shadow: 0 0 14px #fff !important;
   }
 
-  /*Mode Ekspresi Love/Pink */
-  .notch.love .eye {
-    background: #ff6b8b !important;
-    box-shadow: 0 0 10px #ff6b8b !important;
+  /* 4. Ngantuk / Baterai Lemah (- -) */
+  .notch.sleepy .eye {
+    height: 4px !important; width: 16px !important;
+    background: #ff9f43 !important; box-shadow: 0 0 6px #ff9f43 !important;
+    border-radius: 3px !important;
   }
+  .notch.sleepy .eye::after { display: none; }
 
-  /* Animasi Kedip Otomatis */
+  /* 5. Marah Lucu / Pout (> <) */
+  .notch.angry .eye:first-child { transform: rotate(22deg); background: #ff4757 !important; box-shadow: 0 0 10px #ff4757 !important; }
+  .notch.angry .eye:last-child { transform: rotate(-22deg); background: #ff4757 !important; box-shadow: 0 0 10px #ff4757 !important; }
+
+  /* 6. Cyber / Charging */
+  .notch.cyber .eye { background: #00f2fe !important; box-shadow: 0 0 12px #00f2fe !important; }
+  .notch.love .eye { background: #ff6b8b !important; box-shadow: 0 0 12px #ff6b8b !important; }
+
   @keyframes autoBlink {
     0%, 92%, 96%, 100% { transform: scaleY(1); }
     94% { transform: scaleY(0.1); }
   }
 
-  /* Menu Tambahan yang Muncul Saat Kapsul Melebar */
-  .extra-info {
+  /* AREA KONTEN (Muncul Saat Hover) */
+  .content-area {
+    width: 100%;
     opacity: 0;
-    max-height: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 85%;
-    margin-top: 0;
-    transition: all 0.3s ease;
     pointer-events: none;
-    color: white;
-    font-size: 12px;
+    transition: opacity 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-top: 6px;
   }
 
-  .island-wrapper:hover .extra-info {
+  .island-wrapper:hover .content-area,
+  .island-wrapper.pinned .content-area {
     opacity: 1;
-    max-height: 40px;
-    margin-top: 12px;
     pointer-events: auto;
   }
 
-  .clock {
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    color: #e0e0e0;
-  }
-
-  .btn-group {
+  /* Navigasi Tab */
+  .nav-tabs {
     display: flex;
-    gap: 6px;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.07);
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 8px;
   }
 
-  .mini-btn {
-    background: rgba(255, 255, 255, 0.12);
+  .tab-btn {
+    flex: 1;
+    background: transparent;
     border: none;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 10px;
+    color: #aaa;
+    padding: 5px 0;
     font-size: 11px;
+    font-weight: 600;
+    border-radius: 9px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
+  }
+  .tab-btn.active { background: rgba(255,255,255,0.18); color: #fff; }
+
+  .tab-pane { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+  .tab-pane.active { display: flex; }
+
+  /* 1. TAB MUSIK */
+  .music-box {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    flex: 1; gap: 8px; background: rgba(255,255,255,0.04); border-radius: 14px; padding: 10px;
+  }
+  .song-title {
+    font-size: 12px; font-weight: 600; color: #ffe066;
+    max-width: 340px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .music-controls { display: flex; gap: 8px; align-items: center; }
+  .btn-action {
+    background: rgba(255,255,255,0.12); border: none; color: white;
+    padding: 5px 11px; border-radius: 9px; font-size: 11px; cursor: pointer; transition: 0.2s;
+  }
+  .btn-action:hover { background: rgba(255,255,255,0.25); }
+  .btn-primary { background: #4facfe; color: #000; font-weight: 600; }
+  .btn-primary:hover { background: #00f2fe; }
+
+  .visualizer { display: flex; gap: 3px; height: 18px; align-items: flex-end; }
+  .bar { width: 4px; height: 4px; background: #00f2fe; border-radius: 2px; }
+  .playing .bar { animation: bounce 0.5s infinite alternate; }
+  .playing .bar:nth-child(2) { animation-delay: 0.2s; background: #a18cd1; }
+  .playing .bar:nth-child(3) { animation-delay: 0.35s; background: #ff6b8b; }
+  .playing .bar:nth-child(4) { animation-delay: 0.1s; background: #38ef7d; }
+  @keyframes bounce { from { height: 4px; } to { height: 18px; } }
+
+  /* 2. TAB DROP FILE */
+  .drop-zone {
+    flex: 1; border: 1.5px dashed rgba(255,255,255,0.25); border-radius: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 8px; gap: 6px; overflow-y: auto;
+  }
+  .drop-zone.dragover { border-color: #00f2fe; background: rgba(0, 242, 254, 0.1); }
+  .file-list { width: 100%; display: flex; flex-direction: column; gap: 4px; max-height: 110px; overflow-y: auto; }
+  .file-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,0.08); padding: 5px 10px; border-radius: 8px; font-size: 11px; cursor: pointer;
   }
 
-  .mini-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
+  /* 3. TAB TIMER */
+  .timer-box { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+  .timer-display { font-size: 30px; font-weight: 700; letter-spacing: 2px; color: #38ef7d; }
+
+  /* 4. TAB WISHLIST */
+  .wishlist-box { flex: 1; display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
+  .wish-input-row { display: flex; gap: 6px; }
+  .wish-input {
+    flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    color: white; padding: 5px 10px; border-radius: 8px; font-size: 11px; outline: none;
   }
+  .wish-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+  .wish-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,0.06); padding: 5px 10px; border-radius: 8px; font-size: 11px;
+  }
+  .wish-item.done span { text-decoration: line-through; color: #777; }
+
+  /* Footer Kontrol */
+  .footer-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 8px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .active-toggle { background: rgba(255, 224, 102, 0.25) !important; color: #ffe066 !important; font-weight: 600; }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
 </style>
 </head>
 <body>
 
   <div class="island-wrapper" id="island">
-    <!-- Efek Glow di belakang -->
     <div class="glow"></div>
 
-    <!-- Kapsul Utama -->
     <div class="notch" id="notch">
-      <!-- Mata Lucu -->
-      <div class="eyes-box" id="eyesBox">
-        <div class="eye"></div>
-        <div class="eye"></div>
+      <!-- BARIS ATAS: Jam | Mata | Baterai -->
+      <div class="top-bar">
+        <span class="mini-left" id="clock">00:00</span>
+
+        <div class="eyes-box" id="eyesBox" title="Klik untuk mengajak ngobrol / mengelus!">
+          <div class="eye"></div>
+          <div class="eye"></div>
+        </div>
+
+        <span class="mini-right" id="batteryStatus">🔋 --%</span>
       </div>
 
-      <!-- Konten yang muncul saat disentuh mouse -->
-      <div class="extra-info">
-        <span class="clock" id="clock">00:00</span>
-        <div class="btn-group">
-          <button class="mini-btn" id="moodBtn" title="Ganti Ekspresi">😊 Mood</button>
-          <button class="mini-btn" id="closeBtn" title="Tutup Aplikasi">✕</button>
+      <!-- TEKS BICARA NUSA -->
+      <div class="speech-bubble" id="speechBubble">Halo Tuan! ✨</div>
+
+      <!-- AREA FITUR LENGKAP -->
+      <div class="content-area">
+        <div class="nav-tabs">
+          <button class="tab-btn active" onclick="switchTab('music', this)">🎵 Musik</button>
+          <button class="tab-btn" onclick="switchTab('files', this)">📂 Drop File</button>
+          <button class="tab-btn" onclick="switchTab('timer', this)">⏱️ Timer</button>
+          <button class="tab-btn" onclick="switchTab('wish', this)">✨ Wishlist</button>
+        </div>
+
+        <!-- 1. MUSIK -->
+        <div class="tab-pane active" id="tab-music">
+          <div class="music-box">
+            <div class="visualizer" id="visualizer">
+              <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
+            <div class="song-title" id="songTitle">Belum ada lagu dipilih</div>
+            <input type="file" id="audioInput" accept="audio/*" style="display:none">
+            <audio id="audioPlayer"></audio>
+            <div class="music-controls">
+              <button class="btn-action" onclick="playSfx('click'); document.getElementById('audioInput').click()">📁 Pilih MP3</button>
+              <button class="btn-action btn-primary" id="playPauseBtn" onclick="toggleMusic()">▶ Play</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. DROP FILE -->
+        <div class="tab-pane" id="tab-files">
+          <div class="drop-zone" id="dropZone">
+            <div id="dropHint" style="font-size:11px; color:#aaa; text-align:center;">
+              📥 Tarik & Lepas (Drag & Drop) file ke sini untuk disimpan sementara
+            </div>
+            <div class="file-list" id="fileList"></div>
+          </div>
+        </div>
+
+        <!-- 3. TIMER -->
+        <div class="tab-pane" id="tab-timer">
+          <div class="timer-box">
+            <div class="timer-display" id="timerDisplay">25:00</div>
+            <div class="music-controls">
+              <button class="btn-action btn-primary" id="timerStartBtn" onclick="toggleTimer()">Mulai</button>
+              <button class="btn-action" onclick="setTimerMinutes(15)">15m</button>
+              <button class="btn-action" onclick="setTimerMinutes(25)">25m</button>
+              <button class="btn-action" onclick="resetTimer()">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. WISHLIST -->
+        <div class="tab-pane" id="tab-wish">
+          <div class="wishlist-box">
+            <div class="wish-input-row">
+              <input type="text" class="wish-input" id="wishInput" placeholder="Tulis targetmu lalu tekan Enter...">
+              <button class="btn-action btn-primary" onclick="addWish()">+</button>
+            </div>
+            <div class="wish-list" id="wishList"></div>
+          </div>
+        </div>
+
+        <!-- FOOTER TOMBOL PENGATURAN -->
+        <div class="footer-bar">
+          <div style="display:flex; gap:4px;">
+            <button class="btn-action" id="moodBtn" style="padding:3px 7px; font-size:10px;">😊 Mood</button>
+            <button class="btn-action" onclick="randomTalk()" style="padding:3px 7px; font-size:10px;">🗣️ Ngobrol</button>
+            <button class="btn-action active-toggle" id="sfxBtn" style="padding:3px 7px; font-size:10px;">🔊 Suara</button>
+            <button class="btn-action" id="autoStartBtn" style="padding:3px 7px; font-size:10px;" title="Nyalakan otomatis saat laptop hidup">⚡ AutoStart</button>
+            <button class="btn-action" id="pinBtn" style="padding:3px 7px; font-size:10px;">📌 Pin</button>
+          </div>
+          <button class="btn-action" onclick="window.close()" style="padding:3px 7px; font-size:10px; background:rgba(255,80,80,0.3);">✕</button>
         </div>
       </div>
     </div>
@@ -234,75 +438,373 @@
     const island = document.getElementById('island');
     const notch = document.getElementById('notch');
     const eyesBox = document.getElementById('eyesBox');
-    const clockEl = document.getElementById('clock');
-    const moodBtn = document.getElementById('moodBtn');
-    const closeBtn = document.getElementById('closeBtn');
+    const speechBubble = document.getElementById('speechBubble');
+    const batteryStatus = document.getElementById('batteryStatus');
 
-    // 1. Mengatur agar area di luar kapsul bisa ditembus klik mouse
-    island.addEventListener('mouseenter', () => {
-      ipcRenderer.send('set-ignore-mouse', false);
-    });
-    island.addEventListener('mouseleave', () => {
-      ipcRenderer.send('set-ignore-mouse', true);
-      eyesBox.style.transform = `translate(0px, 0px)`; // Reset lirikan mata
+    // --- 1. GENERATOR EFEK SUARA (WEB AUDIO SYNTHESIZER) ---
+    let soundEnabled = true;
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSfx(type) {
+      if (!soundEnabled) return;
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      const now = audioCtx.currentTime;
+
+      if (type === 'click') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(950, now + 0.06);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.06);
+        osc.start(now); osc.stop(now + 0.06);
+      } else if (type === 'cute') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(1100, now + 0.12);
+        osc.frequency.exponentialRampToValueAtTime(850, now + 0.22);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.22);
+        osc.start(now); osc.stop(now + 0.22);
+      } else if (type === 'hover') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.exponentialRampToValueAtTime(480, now + 0.05);
+        gain.gain.setValueAtTime(0.05, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+        osc.start(now); osc.stop(now + 0.05);
+      } else if (type === 'angry') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.linearRampToValueAtTime(140, now + 0.18);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.18);
+        osc.start(now); osc.stop(now + 0.18);
+      }
+    }
+
+    document.getElementById('sfxBtn').addEventListener('click', (e) => {
+      soundEnabled = !soundEnabled;
+      e.target.textContent = soundEnabled ? '🔊 Suara' : '🔇 Mute';
+      e.target.classList.toggle('active-toggle', soundEnabled);
+      if (soundEnabled) playSfx('cute');
     });
 
-    // 2. Mata melirik mengikuti gerakan mouse saat di dekat kapsul
+    // --- 2. FITUR BICARA (VOICE + SPEECH BUBBLE) ---
+    let speechTimeout;
+    function nusaSpeak(text, expression = 'happy', useVoice = true) {
+      speechBubble.textContent = text;
+      island.classList.add('speaking');
+      setExpression(expression, 3500);
+      playSfx('cute');
+
+      // Suara Bicara Bahasa Indonesia
+      if (soundEnabled && useVoice && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text.replace(/[^\w\s,!?.]/gi, ''));
+        utter.lang = 'id-ID';
+        utter.pitch = 1.35; // Nada suara agak imut
+        utter.rate = 1.05;
+        window.speechSynthesis.speak(utter);
+      }
+
+      clearTimeout(speechTimeout);
+      speechTimeout = setTimeout(() => {
+        island.classList.remove('speaking');
+      }, 4500);
+    }
+
+    // Sapaan Otomatis Saat Baru Menyala
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const hour = new Date().getHours();
+        let greet = 'Halo Tuan!';
+        if (hour >= 4 && hour < 11) greet = 'Selamat pagi Tuan! Sudah siap dengan hari ini? ☀️';
+        else if (hour >= 11 && hour < 15) greet = 'Selamat siang Tuan! Tetap semangat ya kerjanya! 🔥';
+        else if (hour >= 15 && hour < 19) greet = 'Selamat sore Tuan! Jangan lupa istirahat sejenak ya ✨';
+        else greet = 'Selamat malam Tuan! Mau ngoding atau santai malam ini? 🌙';
+
+        nusaSpeak(greet, 'happy', true);
+      }, 1200);
+    });
+
+    const randomQuotes = [
+      { t: 'Tuan udah minum air putih belum hari ini? 💧', m: 'wink' },
+      { t: 'Aku siap jagain file dan musik Tuan di sini! 🚀', m: 'happy' },
+      { t: 'Kalau capek, nyalakan timer istirahatnya ya Tuan! 😊', m: 'love' },
+      { t: 'Semangat terus Tuan! Hari ini pasti produktif! ✨', m: 'cyber' },
+      { t: 'Jangan begadang terus ya Tuan, kesehatan nomor satu! 👀', m: 'shock' }
+    ];
+
+    function randomTalk() {
+      const pick = randomQuotes[Math.floor(Math.random() * randomQuotes.length)];
+      nusaSpeak(pick.t, pick.m, true);
+    }
+
+    // --- 3. INDIKATOR BATERAI LAPTOP REAL-TIME ---
+    if ('getBattery' in navigator) {
+      navigator.getBattery().then(battery => {
+        function updateBattery() {
+          const level = Math.round(battery.level * 100);
+          const charging = battery.charging;
+          const icon = charging ? '⚡' : (level <= 20 ? '🪫' : '🔋');
+          batteryStatus.textContent = `${icon} ${level}%`;
+          batteryStatus.style.color = charging ? '#00f2fe' : (level <= 20 ? '#ff4757' : '#38ef7d');
+
+          if (level <= 20 && !charging) {
+            notch.className = 'notch sleepy';
+          }
+        }
+
+        battery.addEventListener('chargingchange', () => {
+          updateBattery();
+          if (battery.charging) {
+            nusaSpeak('Asik! Charger dipasang, energi terisi penuh! ⚡', 'cyber', true);
+          } else {
+            nusaSpeak('Charger dilepas, mode baterai aktif Tuan! 🔋', 'wink', false);
+          }
+        });
+
+        battery.addEventListener('levelchange', updateBattery);
+        updateBattery();
+      });
+    }
+
+    // --- 4. INTERAKSI MATA EKSPRESIF ---
+    let currentMood = '';
+    const moods = ['', 'happy', 'wink', 'cyber', 'love', 'sleepy'];
+    let moodIndex = 0;
+
+    function setExpression(exp, duration = 0) {
+      notch.className = 'notch ' + exp;
+      if (duration > 0) {
+        setTimeout(() => { notch.className = 'notch ' + currentMood; }, duration);
+      }
+    }
+
+    document.getElementById('moodBtn').addEventListener('click', () => {
+      playSfx('click');
+      moodIndex = (moodIndex + 1) % moods.length;
+      currentMood = moods[moodIndex];
+      notch.className = 'notch ' + currentMood;
+    });
+
+    // Klik pada mata: kalau diklik cepat berkali-kali dia ngambek lucu (> <)
+    let clickCount = 0;
+    let clickTimer;
+    eyesBox.addEventListener('click', () => {
+      clickCount++;
+      clearTimeout(clickTimer);
+      if (clickCount >= 4) {
+        playSfx('angry');
+        nusaSpeak('Aduh Tuan, mataku pusing diklik terus! >_<', 'angry', true);
+        clickCount = 0;
+      } else {
+        playSfx('cute');
+        setExpression('happy', 1200);
+        clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
+      }
+    });
+
+    // Mata melirik mengikuti mouse
     document.addEventListener('mousemove', (e) => {
       const rect = notch.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-
-      const deltaX = Math.max(-10, Math.min(10, (e.clientX - centerX) / 10));
-      const deltaY = Math.max(-5, Math.min(5, (e.clientY - centerY) / 10));
-
-      eyesBox.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+      const dx = Math.max(-10, Math.min(10, (e.clientX - (rect.left + rect.width / 2)) / 12));
+      const dy = Math.max(-5, Math.min(5, (e.clientY - (rect.top + rect.height / 2)) / 12));
+      eyesBox.style.transform = `translate(${dx}px, ${dy}px)`;
     });
 
-    // 3. Animasi melirik otomatis secara acak saat sedang diam (Idle)
+    // Gerakan mata mandiri saat diam (melirik + kedip sebelah sesekali)
     setInterval(() => {
-      if (!island.matches(':hover')) {
-        const randomX = (Math.random() - 0.5) * 14; // Melirik kiri/kanan acak
-        eyesBox.style.transform = `translate(${randomX}px, 0px)`;
-        setTimeout(() => {
-          if (!island.matches(':hover')) {
-            eyesBox.style.transform = `translate(0px, 0px)`;
-          }
-        }, 1200);
+      if (!island.matches(':hover') && !isPinned) {
+        const rx = (Math.random() - 0.5) * 16;
+        eyesBox.style.transform = `translate(${rx}px, 0px)`;
+        if (Math.random() > 0.7) setExpression('wink', 600);
+        setTimeout(() => eyesBox.style.transform = `translate(0px, 0px)`, 1100);
       }
-    }, 5000);
+    }, 4200);
 
-    // 4. Ganti ekspresi mata (Normal -> Senyum ^ ^ -> Pink)
-    let moodIndex = 0;
-    const moods = ['', 'happy', 'love'];
-    moodBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      moodIndex = (moodIndex + 1) % moods.length;
-      notch.className = 'notch ' + moods[moodIndex];
+    // --- 5. HOVER, PIN & AUTO-START ---
+    let isPinned = false;
+    document.getElementById('pinBtn').addEventListener('click', (e) => {
+      playSfx('click');
+      isPinned = !isPinned;
+      island.classList.toggle('pinned', isPinned);
+      e.target.classList.toggle('active-toggle', isPinned);
     });
 
-    // Klik langsung pada kapsul untuk mengelus/membuat matanya senyum sebentar
-    notch.addEventListener('click', () => {
-      notch.classList.add('happy');
-      setTimeout(() => {
-        if (moods[moodIndex] !== 'happy') {
-          notch.classList.remove('happy');
-        }
-      }, 1000);
+    let autoStart = localStorage.getItem('nusa_autostart') === 'true';
+    const autoStartBtn = document.getElementById('autoStartBtn');
+    autoStartBtn.classList.toggle('active-toggle', autoStart);
+    autoStartBtn.addEventListener('click', () => {
+      playSfx('click');
+      autoStart = !autoStart;
+      localStorage.setItem('nusa_autostart', autoStart);
+      autoStartBtn.classList.toggle('active-toggle', autoStart);
+      ipcRenderer.send('toggle-autostart', autoStart);
+      nusaSpeak(autoStart ? 'Siap! Aku akan otomatis menyala saat laptop Tuan hidup! ⚡' : 'Mode Auto-Start dimatikan Tuan.', 'happy', false);
     });
 
-    // 5. Tombol tutup aplikasi
-    closeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      window.close();
+    island.addEventListener('mouseenter', () => {
+      ipcRenderer.send('set-ignore-mouse', false);
+      playSfx('hover');
+    });
+    island.addEventListener('mouseleave', () => {
+      if (!isPinned) ipcRenderer.send('set-ignore-mouse', true);
+      eyesBox.style.transform = `translate(0px, 0px)`;
     });
 
-    // 6. Update Jam Digital
+    function switchTab(tabName, btn) {
+      playSfx('click');
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + tabName).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // --- 6. MUSIK ---
+    const audioInput = document.getElementById('audioInput');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const visualizer = document.getElementById('visualizer');
+
+    audioInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        document.getElementById('songTitle').textContent = file.name;
+        audioPlayer.src = URL.createObjectURL(file);
+        audioPlayer.play();
+        updateMusicUI(true);
+        nusaSpeak('Asik, memutar lagu pilihan Tuan! 🎵', 'happy', false);
+      }
+    });
+
+    function toggleMusic() {
+      playSfx('click');
+      if (!audioPlayer.src) { audioInput.click(); return; }
+      if (audioPlayer.paused) { audioPlayer.play(); updateMusicUI(true); }
+      else { audioPlayer.pause(); updateMusicUI(false); }
+    }
+
+    function updateMusicUI(isPlaying) {
+      playPauseBtn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+      visualizer.classList.toggle('playing', isPlaying);
+    }
+
+    // --- 7. DROP FILE ---
+    const dropZone = document.getElementById('dropZone');
+    const fileList = document.getElementById('fileList');
+    const dropHint = document.getElementById('dropHint');
+    let droppedFiles = [];
+
+    window.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    window.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    window.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      Array.from(e.dataTransfer.files).forEach(f => droppedFiles.push({ name: f.name, path: f.path }));
+      renderFiles();
+      nusaSpeak('File sudah aku tangkap dan simpan Tuan! 📂', 'shock', false);
+    });
+
+    function renderFiles() {
+      dropHint.style.display = droppedFiles.length ? 'none' : 'block';
+      fileList.innerHTML = '';
+      droppedFiles.forEach((f, idx) => {
+        const div = document.createElement('div');
+        div.className = 'file-item';
+        div.innerHTML = `
+          <span onclick="openFile('${f.path.replace(/\\/g, '\\\\')}')" title="Klik untuk buka file">📄 ${f.name.substring(0, 28)}</span>
+          <span onclick="removeFile(${idx})" style="color:#ff6b8b; font-weight:bold;">✕</span>
+        `;
+        fileList.appendChild(div);
+      });
+    }
+    window.openFile = (p) => { playSfx('click'); ipcRenderer.send('open-file', p); };
+    window.removeFile = (i) => { playSfx('click'); droppedFiles.splice(i, 1); renderFiles(); };
+
+    // --- 8. TIMER ---
+    let timeLeft = 25 * 60;
+    let timerInterval = null;
+    const timerDisplay = document.getElementById('timerDisplay');
+    const timerStartBtn = document.getElementById('timerStartBtn');
+
+    function updateTimerText() {
+      const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+      const s = String(timeLeft % 60).padStart(2, '0');
+      timerDisplay.textContent = `${m}:${s}`;
+    }
+
+    function toggleTimer() {
+      playSfx('click');
+      if (timerInterval) {
+        clearInterval(timerInterval); timerInterval = null;
+        timerStartBtn.textContent = 'Mulai';
+      } else {
+        timerStartBtn.textContent = 'Jeda';
+        nusaSpeak('Timer fokus dimulai! Semangat Tuan! ⏱️', 'cyber', false);
+        timerInterval = setInterval(() => {
+          if (timeLeft > 0) { timeLeft--; updateTimerText(); }
+          else {
+            clearInterval(timerInterval); timerInterval = null;
+            timerStartBtn.textContent = 'Mulai';
+            nusaSpeak('Waktu habis Tuan! Saatnya istirahat sejenak ya! 🎉', 'happy', true);
+          }
+        }, 1000);
+      }
+    }
+
+    function setTimerMinutes(mins) {
+      playSfx('click'); clearInterval(timerInterval); timerInterval = null;
+      timerStartBtn.textContent = 'Mulai'; timeLeft = mins * 60; updateTimerText();
+    }
+    function resetTimer() { setTimerMinutes(25); }
+
+    // --- 9. WISHLIST ---
+    const wishInput = document.getElementById('wishInput');
+    const wishListEl = document.getElementById('wishList');
+    let wishes = JSON.parse(localStorage.getItem('my_wishes') || '[]');
+
+    function renderWishes() {
+      localStorage.setItem('my_wishes', JSON.stringify(wishes));
+      wishListEl.innerHTML = '';
+      wishes.forEach((w, idx) => {
+        const item = document.createElement('div');
+        item.className = 'wish-item ' + (w.done ? 'done' : '');
+        item.innerHTML = `
+          <span onclick="toggleWish(${idx})" style="cursor:pointer; flex:1;">${w.done ? '✅' : '⬜'} ${w.text}</span>
+          <span onclick="deleteWish(${idx})" style="cursor:pointer; color:#ff6b8b;">✕</span>
+        `;
+        wishListEl.appendChild(item);
+      });
+    }
+
+    function addWish() {
+      const val = wishInput.value.trim();
+      if (val) {
+        playSfx('cute');
+        wishes.push({ text: val, done: false });
+        wishInput.value = '';
+        renderWishes();
+      }
+    }
+    wishInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addWish(); });
+    window.toggleWish = (i) => {
+      wishes[i].done = !wishes[i].done;
+      if (wishes[i].done) nusaSpeak('Mantap Tuan! Satu target berhasil diselesaikan! 🎉', 'happy', false);
+      renderWishes();
+    };
+    window.deleteWish = (i) => { playSfx('click'); wishes.splice(i, 1); renderWishes(); };
+    renderWishes();
+
+    // --- 10. JAM DIGITAL ---
     function updateClock() {
       const now = new Date();
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      clockEl.textContent = `${hours}:${minutes}`;
+      document.getElementById('clock').textContent =
+        String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
     }
     setInterval(updateClock, 1000);
     updateClock();

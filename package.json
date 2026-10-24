@@ -1,0 +1,23 @@
+{
+  "name": "my-dynamic-island",
+  "version": "1.0.0",
+  "description": "Aplikasi Dynamic Island Mata Lucu",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --win portable"
+  },
+  "author": "Dhika",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.dhika.dynamicisland",
+    "productName": "NusaCuteEye",
+    "win": {
+      "target": "portable"
+    }
+  }
+}

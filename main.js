@@ -1,5 +1,10 @@
 const { app, BrowserWindow, screen, ipcMain, shell, clipboard, globalShortcut } = require('electron');
 const os = require('os');
+const { exec } = require('child_process');
+
+// Membuka blokir suara otomatis agar Nusa langsung bisa ngomong saat baru nyala
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+app.commandLine.appendSwitch('enable-speech-dispatcher');
 
 let win;
 let lastClipboard = '';
@@ -9,8 +14,8 @@ function createWindow() {
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width } = primaryDisplay.workAreaSize;
 
-  const windowWidth = 480;
-  const windowHeight = 350;
+  const windowWidth = 500;
+  const windowHeight = 380;
 
   win = new BrowserWindow({
     width: windowWidth,
@@ -33,7 +38,7 @@ function createWindow() {
   win.setIgnoreMouseEvents(true, { forward: true });
   win.loadFile('index.html');
 
-  // Shortcut Global Alt + X untuk Ghost Mode (Anti-Penghalang 100%)
+  // Shortcut Alt + X untuk Ghost Mode (Anti-Penghalang 100%)
   globalShortcut.register('Alt+X', () => {
     isGhostMode = !isGhostMode;
     if (win) {
@@ -42,32 +47,36 @@ function createWindow() {
     }
   });
 
-  // Monitor Kesehatan Laptop (RAM & CPU) & Clipboard setiap 2 detik
+  // Monitor RAM & Clipboard setiap 2 detik
   setInterval(() => {
     if (!win || win.isDestroyed()) return;
 
-    // 1. Cek Penggunaan RAM & CPU
     const totalMem = os.totalmem();
     const freeMem = os.freemem();
     const ramUsage = Math.round(((totalMem - freeMem) / totalMem) * 100);
+    win.webContents.send('system-stats', { ram: ramUsage });
 
-    const cpus = os.cpus();
-    let totalIdle = 0, totalTick = 0;
-    cpus.forEach(cpu => {
-      for (let type in cpu.times) totalTick += cpu.times[type];
-      totalIdle += cpu.times.idle;
-    });
-    const cpuUsage = Math.min(100, Math.max(5, Math.round(100 - ~~(100 * totalIdle / totalTick))));
-
-    win.webContents.send('system-stats', { ram: ramUsage, cpu: cpuUsage });
-
-    // 2. Cek Teks Baru di Clipboard (Copy-Paste)
     const currentClip = clipboard.readText().trim();
     if (currentClip && currentClip !== lastClipboard) {
       lastClipboard = currentClip;
       win.webContents.send('clipboard-update', currentClip);
     }
   }, 2000);
+
+  // Detektor Aplikasi Windows untuk Misi Kultivasi Otomatis (Setiap 4 detik)
+  setInterval(() => {
+    if (!win || win.isDestroyed()) return;
+    exec('tasklist /FO CSV /NH', (err, stdout) => {
+      if (err) return;
+      const processes = stdout.toLowerCase();
+      const detected = {
+        vscode: processes.includes('code.exe'),
+        word: processes.includes('winword.exe') || processes.includes('wps.exe') || processes.includes('et.exe'),
+        media: processes.includes('chrome.exe') || processes.includes('msedge.exe') || processes.includes('vlc.exe') || processes.includes('spotify.exe')
+      };
+      win.webContents.send('running-apps', detected);
+    });
+  }, 4000);
 }
 
 ipcMain.on('set-ignore-mouse', (event, ignore) => {
@@ -84,11 +93,10 @@ ipcMain.on('activate-ghost', () => {
   }
 });
 
-// Pindah Posisi Kapsul (Kiri / Tengah / Kanan) agar tidak menghalangi
 ipcMain.on('move-position', (event, pos) => {
   if (!win) return;
   const { width } = screen.getPrimaryDisplay().workAreaSize;
-  const winWidth = 480;
+  const winWidth = 500;
   let newX = Math.round((width - winWidth) / 2);
   if (pos === 'left') newX = 20;
   if (pos === 'right') newX = width - winWidth - 20;
@@ -109,7 +117,6 @@ ipcMain.on('toggle-autostart', (event, enable) => {
 });
 
 app.whenReady().then(createWindow);
-
 app.on('will-quit', () => globalShortcut.unregisterAll());
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();

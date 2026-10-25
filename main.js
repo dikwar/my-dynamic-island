@@ -48,7 +48,7 @@ function createWindow() {
     }
   });
 
-  // PELACAK KURSOR GLOBAL: Agar mata Nusa mengikuti mouse di seluruh layar Windows!
+  // PELACAK KURSOR GLOBAL
   setInterval(() => {
     if (!win || win.isDestroyed()) return;
     const cursorPos = screen.getCursorScreenPoint();
@@ -81,7 +81,7 @@ function createWindow() {
     }
   }, 2000);
 
-  // Detektor Aplikasi Windows + Pembaca Lagu Spotify Real-Time (Setiap 3 detik)
+  // Detektor Aplikasi Windows 
   setInterval(() => {
     if (!win || win.isDestroyed()) return;
 

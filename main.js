@@ -48,6 +48,23 @@ function createWindow() {
     }
   });
 
+  // PELACAK KURSOR GLOBAL: Agar mata Nusa mengikuti mouse di seluruh layar Windows!
+  setInterval(() => {
+    if (!win || win.isDestroyed()) return;
+    const cursorPos = screen.getCursorScreenPoint();
+    const winBounds = win.getBounds();
+    const displaySize = screen.getPrimaryDisplay().workAreaSize;
+
+    win.webContents.send('global-cursor', {
+      cursorX: cursorPos.x,
+      cursorY: cursorPos.y,
+      centerX: winBounds.x + winBounds.width / 2,
+      centerY: winBounds.y + 22,
+      screenW: displaySize.width,
+      screenH: displaySize.height
+    });
+  }, 40);
+
   // Monitor RAM & Clipboard setiap 2 detik
   setInterval(() => {
     if (!win || win.isDestroyed()) return;
@@ -68,7 +85,6 @@ function createWindow() {
   setInterval(() => {
     if (!win || win.isDestroyed()) return;
 
-    // 1. Cek aplikasi untuk Misi Kultivasi
     exec('tasklist /FO CSV /NH', (err, stdout) => {
       if (!err && stdout) {
         const processes = stdout.toLowerCase();
@@ -81,7 +97,6 @@ function createWindow() {
       }
     });
 
-    // 2. Baca Judul Lagu & Penyanyi yang sedang diputar di Aplikasi Spotify
     exec('powershell -NoProfile -WindowStyle Hidden -Command "(Get-Process Spotify -ErrorAction SilentlyContinue | Where-Object {$_.MainWindowTitle} | Select-Object -First 1).MainWindowTitle"', (err, stdout) => {
       if (!err && win && !win.isDestroyed()) {
         const title = (stdout || '').trim();
@@ -94,13 +109,12 @@ function createWindow() {
   }, 3000);
 }
 
-// Kontrol Media Spotify (Play/Pause, Next, Prev, Buka Aplikasi Spotify)
+// Kontrol Media Spotify
 ipcMain.on('spotify-control', (event, action) => {
   if (action === 'open') {
     shell.openExternal('spotify:');
     return;
   }
-  // Keycode Media Windows: 179 = Play/Pause, 176 = Next Track, 177 = Prev Track
   let keyCode = 179;
   if (action === 'next') keyCode = 176;
   if (action === 'prev') keyCode = 177;
@@ -142,7 +156,7 @@ ipcMain.on('open-file', (event, filePath) => {
   if (filePath) shell.openPath(filePath);
 });
 
-// PERBAIKAN PENTING: Gunakan PORTABLE_EXECUTABLE_FILE agar tidak pernah error ffmpeg.dll saat Windows nyala!
+// Anti-Error ffmpeg.dll saat Windows Startup
 ipcMain.on('toggle-autostart', (event, enable) => {
   const realExePath = process.env.PORTABLE_EXECUTABLE_FILE || app.getPath('exe');
   app.setLoginItemSettings({

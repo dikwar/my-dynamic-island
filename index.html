@@ -85,7 +85,7 @@
   .island-wrapper.expanded .notch,
   .island-wrapper.pinned .notch {
     width: 470px;
-    height: 350px;
+    height: 355px;
     border-radius: 0 0 28px 28px;
     padding: 10px 16px;
   }
@@ -93,7 +93,7 @@
   .island-wrapper.expanded .glow,
   .island-wrapper.pinned .glow {
     width: 480px;
-    height: 358px;
+    height: 363px;
     filter: blur(16px);
     opacity: 0.95;
   }
@@ -117,7 +117,19 @@
   }
   .mini-right { justify-content: flex-end; color: #38ef7d; }
 
-  /* WADAH WAJAH & MATA HIDUP (ALIS + MATA + BLUSH PIPI) */
+  /* WADAH WAJAH & MATA HIDUP (DENGAN PELACAK KURSOR MULUS) */
+  .face-breath-wrapper {
+    animation: floatBreath 3s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @keyframes floatBreath {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-1.5px); }
+  }
+
   .face-box {
     position: relative;
     display: flex;
@@ -126,12 +138,7 @@
     gap: 16px;
     cursor: pointer;
     padding: 3px 10px;
-    animation: floatBreath 3s ease-in-out infinite;
-  }
-
-  @keyframes floatBreath {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-1.5px); }
+    transition: transform 0.08s linear;
   }
 
   .eye-unit {
@@ -152,49 +159,55 @@
   }
 
   .eye {
-    width: 15px;
-    height: 10px;
+    width: 16px;
+    height: 11px;
     background: #ffe066;
     border-radius: 10px;
     box-shadow: 0 0 8px #ffd43b, 0 0 14px rgba(255, 212, 59, 0.75);
-    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: width 0.22s, height 0.22s, border-radius 0.22s, background 0.22s;
     position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     animation: autoBlink 4s infinite;
   }
 
+  /* Kilau Mata */
   .eye::before {
     content: '';
     position: absolute;
-    width: 4px;
-    height: 4px;
+    width: 3.5px;
+    height: 3.5px;
     background: #fff;
     border-radius: 50%;
-    top: 2px;
+    top: 1.5px;
     right: 2px;
-    z-index: 2;
+    z-index: 3;
   }
 
-  .eye::after {
-    content: '';
-    position: absolute;
+  /* Pupil Hitam yang Bergerak Mengikuti Kursor Mouse */
+  .pupil {
     width: 6px;
     height: 6px;
     background: #111;
     border-radius: 50%;
-    top: 4px;
-    left: 4px;
-    opacity: 0;
-    transition: 0.2s;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.06s linear;
   }
 
   .island-wrapper.expanded .eye,
   .island-wrapper.pinned .eye {
-    width: 19px;
-    height: 19px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
   }
-  .island-wrapper.expanded .eye::after,
-  .island-wrapper.pinned .eye::after { opacity: 1; }
+  .island-wrapper.expanded .pupil,
+  .island-wrapper.pinned .pupil {
+    width: 7.5px;
+    height: 7.5px;
+  }
 
   .blush {
     position: absolute;
@@ -204,7 +217,7 @@
     background: #ff6b8b;
     border-radius: 50%;
     filter: blur(1.5px);
-    opacity: 0.35;
+    opacity: 0.4;
     transition: 0.3s;
   }
   .blush.left { left: -2px; }
@@ -216,12 +229,12 @@
     background: transparent !important; box-shadow: none !important;
     border-top: 3.5px solid #ffe066; border-radius: 50% 50% 0 0 !important;
   }
-  .notch.happy .eye::after, .notch.happy .eye::before { display: none; }
+  .notch.happy .pupil, .notch.happy .eye::before { display: none; }
   .notch.happy .brow { transform: translateY(-2px); }
-  .notch.happy .blush { opacity: 0.9; transform: scale(1.2); }
+  .notch.happy .blush { opacity: 0.95; transform: scale(1.2); }
 
   .notch.wink .eye-unit:first-child .eye { height: 3px !important; width: 16px !important; border-radius: 4px !important; }
-  .notch.wink .eye-unit:first-child .eye::after { display: none; }
+  .notch.wink .eye-unit:first-child .pupil { display: none; }
   .notch.wink .blush { opacity: 0.85; }
 
   .notch.shock .eye { width: 20px !important; height: 20px !important; border-radius: 50% !important; background: #fff !important; box-shadow: 0 0 15px #fff !important; }
@@ -229,12 +242,13 @@
 
   .notch.angry .eye-unit:first-child .brow { transform: rotate(25deg) translateY(2px); background: #ff4757; }
   .notch.angry .eye-unit:last-child .brow { transform: rotate(-25deg) translateY(2px); background: #ff4757; }
-  .notch.angry .eye { background: #ff4757 !important; box-shadow: 0 0 12px #ff4757 !important; height: 8px !important; }
+  .notch.angry .eye { background: #ff4757 !important; box-shadow: 0 0 12px #ff4757 !important; height: 9px !important; }
 
   .notch.cyber .eye, .notch.cyber .brow { background: #00f2fe !important; box-shadow: 0 0 12px #00f2fe !important; }
   .notch.love .eye, .notch.love .brow { background: #ff6b8b !important; box-shadow: 0 0 12px #ff6b8b !important; }
   .notch.love .blush { opacity: 1; transform: scale(1.4); }
   .notch.sleepy .eye { height: 3.5px !important; width: 15px !important; background: #ff9f43 !important; }
+  .notch.sleepy .pupil { display: none; }
   .notch.sleepy .brow { transform: translateY(2px); opacity: 0.4; }
 
   @keyframes autoBlink {
@@ -337,8 +351,8 @@
     flex: 1; gap: 6px; background: rgba(255,255,255,0.04); border-radius: 12px; padding: 8px;
   }
   .song-title {
-    font-size: 11px; font-weight: 600; color: #ffe066;
-    max-width: 340px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: 11px; font-weight: 600; color: #1ed760;
+    max-width: 380px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .music-controls { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; justify-content: center; }
   .btn-action {
@@ -348,13 +362,15 @@
   .btn-action:hover { background: rgba(255,255,255,0.25); }
   .btn-primary { background: #4facfe; color: #000; font-weight: 600; }
   .btn-primary:hover { background: #00f2fe; }
+  .btn-spotify { background: #1db954; color: #000; font-weight: 700; }
+  .btn-spotify:hover { background: #1ed760; }
 
   .visualizer { display: flex; gap: 3px; height: 14px; align-items: flex-end; }
-  .bar { width: 4px; height: 4px; background: #00f2fe; border-radius: 2px; }
+  .bar { width: 4px; height: 4px; background: #1ed760; border-radius: 2px; }
   .playing .bar { animation: bounce 0.5s infinite alternate; }
-  .playing .bar:nth-child(2) { animation-delay: 0.2s; background: #a18cd1; }
+  .playing .bar:nth-child(2) { animation-delay: 0.2s; background: #00f2fe; }
   .playing .bar:nth-child(3) { animation-delay: 0.35s; background: #ff6b8b; }
-  .playing .bar:nth-child(4) { animation-delay: 0.1s; background: #38ef7d; }
+  .playing .bar:nth-child(4) { animation-delay: 0.1s; background: #ffe066; }
   @keyframes bounce { from { height: 4px; } to { height: 14px; } }
 
   .drop-zone {
@@ -409,24 +425,26 @@
     <div class="glow" id="glowAura"></div>
 
     <div class="notch" id="notch">
-      <!-- BARIS ATAS: Jam + RAM | Wajah & Mata Hidup | Baterai -->
+      <!-- BARIS ATAS: Jam + RAM | Wajah & Mata Melirik Kursor | Baterai -->
       <div class="top-bar">
         <div class="mini-left">
           <span id="clock">00:00</span>
           <span id="ramBadge" style="color:#00f2fe; font-size:9.5px;">🧠 --%</span>
         </div>
 
-        <div class="face-box" id="eyesBox" title="Klik untuk elus / ngobrol!">
-          <div class="blush left"></div>
-          <div class="eye-unit">
-            <div class="brow"></div>
-            <div class="eye"></div>
+        <div class="face-breath-wrapper">
+          <div class="face-box" id="eyesBox" title="Klik untuk elus / ngobrol!">
+            <div class="blush left"></div>
+            <div class="eye-unit">
+              <div class="brow"></div>
+              <div class="eye"><div class="pupil"></div></div>
+            </div>
+            <div class="eye-unit">
+              <div class="brow"></div>
+              <div class="eye"><div class="pupil"></div></div>
+            </div>
+            <div class="blush right"></div>
           </div>
-          <div class="eye-unit">
-            <div class="brow"></div>
-            <div class="eye"></div>
-          </div>
-          <div class="blush right"></div>
         </div>
 
         <div class="mini-right" id="batteryStatus">🔋 --%</div>
@@ -445,16 +463,42 @@
       <!-- MENU UTAMA -->
       <div class="content-area">
         <div class="nav-tabs">
-          <button class="tab-btn active" onclick="switchTab('quests', this)">⚔️ Misi</button>
+          <button class="tab-btn active" onclick="switchTab('music', this)">🟢 Spotify/Audio</button>
+          <button class="tab-btn" onclick="switchTab('quests', this)">⚔️ Misi</button>
           <button class="tab-btn" onclick="switchTab('selfcode', this)">🧬 Ngoding</button>
-          <button class="tab-btn" onclick="switchTab('music', this)">🎵 Audio</button>
           <button class="tab-btn" onclick="switchTab('files', this)">📂 File/Clip</button>
           <button class="tab-btn" onclick="switchTab('timer', this)">⏱️ Timer</button>
           <button class="tab-btn" onclick="switchTab('wish', this)">✨ Target</button>
         </div>
 
-        <!-- 1. TAB MISI KULTIVASI OTOMATIS -->
-        <div class="tab-pane active" id="tab-quests">
+        <!-- 1. TAB SPOTIFY, MP3 & LO-FI -->
+        <div class="tab-pane active" id="tab-music">
+          <div class="music-box">
+            <div class="visualizer" id="visualizer">
+              <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
+            <div class="song-title" id="songTitle">🟢 Putar lagu di aplikasi Spotify atau pilih MP3</div>
+
+            <div class="music-controls">
+              <button class="btn-action btn-spotify" onclick="spotifyCmd('open')">🟢 Buka Spotify</button>
+              <button class="btn-action" onclick="spotifyCmd('prev')">⏮️</button>
+              <button class="btn-action btn-spotify" onclick="spotifyCmd('playpause')">⏯️ Play/Pause</button>
+              <button class="btn-action" onclick="spotifyCmd('next')">⏭️</button>
+            </div>
+
+            <input type="file" id="audioInput" accept="*" style="display:none">
+            <audio id="audioPlayer"></audio>
+            <div class="music-controls" style="margin-top:2px; padding-top:4px; border-top:1px solid rgba(255,255,255,0.08); width:100%;">
+              <button class="btn-action" onclick="playSfx('click'); document.getElementById('audioInput').click()">📁 File MP3</button>
+              <button class="btn-action" id="playPauseBtn" onclick="toggleMusic()">▶ MP3</button>
+              <button class="btn-action" id="rainBtn" onclick="toggleAmbient('rain')">🌧️ Hujan</button>
+              <button class="btn-action" id="zenBtn" onclick="toggleAmbient('zen')">🌊 Deep Zen</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. TAB MISI KULTIVASI OTOMATIS -->
+        <div class="tab-pane" id="tab-quests">
           <div class="drop-zone" style="border-style:solid; border-color:rgba(255,224,102,0.2);">
             <div style="font-size:10px; color:#ffe066; width:100%; display:flex; justify-content:space-between;">
               <span>📜 Misi Kultivasi Harian (Otomatis Terdeteksi):</span>
@@ -464,7 +508,7 @@
           </div>
         </div>
 
-        <!-- 2. TAB SELF-CODING -->
+        <!-- 3. TAB SELF-CODING -->
         <div class="tab-pane" id="tab-selfcode">
           <div class="music-box" style="align-items:stretch; gap:5px;">
             <div style="font-size:10px; color:#00f2fe; display:flex; justify-content:space-between;">
@@ -483,24 +527,6 @@
                 <button class="btn-action" onclick="applySelfCode(true)" style="background:#38ef7d; color:#000; font-weight:bold;">⚡ Terapkan</button>
                 <button class="btn-action" onclick="applyPreset('reset')">Reset</button>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. TAB AUDIO & LO-FI -->
-        <div class="tab-pane" id="tab-music">
-          <div class="music-box">
-            <div class="visualizer" id="visualizer">
-              <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            </div>
-            <div class="song-title" id="songTitle">Pilih MP3 atau Suara Fokus Bawaan</div>
-            <input type="file" id="audioInput" accept="audio/*" style="display:none">
-            <audio id="audioPlayer"></audio>
-            <div class="music-controls">
-              <button class="btn-action" onclick="playSfx('click'); document.getElementById('audioInput').click()">📁 MP3</button>
-              <button class="btn-action btn-primary" id="playPauseBtn" onclick="toggleMusic()">▶ Play</button>
-              <button class="btn-action" id="rainBtn" onclick="toggleAmbient('rain')">🌧️ Hujan</button>
-              <button class="btn-action" id="zenBtn" onclick="toggleAmbient('zen')">🌊 Deep Zen</button>
             </div>
           </div>
         </div>
@@ -567,12 +593,55 @@
     const island = document.getElementById('island');
     const notch = document.getElementById('notch');
     const eyesBox = document.getElementById('eyesBox');
+    const pupils = document.querySelectorAll('.pupil');
     const speechBubble = document.getElementById('speechBubble');
     const batteryStatus = document.getElementById('batteryStatus');
     const ramBadge = document.getElementById('ramBadge');
     const glowAura = document.getElementById('glowAura');
+    const songTitleEl = document.getElementById('songTitle');
+    const visualizer = document.getElementById('visualizer');
 
-    // --- 1. SISTEM SUARA BICARA PASTI NYALA SAAT STARTUP ---
+    // --- 0. PELACAK MATA & PUPIL MENGIKUTI KURSOR DI SELURUH LAYAR ---
+    ipcRenderer.on('global-cursor', (e, pos) => {
+      const diffX = pos.cursorX - pos.centerX;
+      const diffY = pos.cursorY - pos.centerY;
+
+      // Gerakan seluruh wadah wajah/mata
+      const faceX = Math.max(-9, Math.min(9, (diffX / (pos.screenW / 2)) * 9));
+      const faceY = Math.max(-3.5, Math.min(4.5, (diffY / pos.screenH) * 5));
+      eyesBox.style.transform = `translate(${faceX}px, ${faceY}px)`;
+
+      // Gerakan pupil hitam di dalam bola mata
+      const pupilX = Math.max(-3.8, Math.min(3.8, (diffX / (pos.screenW / 2)) * 4.2));
+      const pupilY = Math.max(-2.2, Math.min(2.8, (diffY / pos.screenH) * 3));
+      pupils.forEach(p => {
+        p.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
+      });
+    });
+
+    // --- 1. INTEGRASI SPOTIFY DESKTOP REAL-TIME ---
+    function spotifyCmd(action) {
+      playSfx('click');
+      ipcRenderer.send('spotify-control', action);
+      if (action === 'open') {
+        nusaSpeak('Membuka aplikasi Spotify untuk Tuan! 🟢', 'happy', false);
+      }
+    }
+
+    ipcRenderer.on('spotify-track', (e, trackTitle) => {
+      if (trackTitle && !trackTitle.toLowerCase().startsWith('spotify')) {
+        songTitleEl.textContent = `🟢 Spotify: ${trackTitle}`;
+        visualizer.classList.add('playing');
+        nusaSpeak(`🎵 Memutar di Spotify: ${trackTitle}`, 'happy', false);
+      } else if (trackTitle && trackTitle.toLowerCase().startsWith('spotify')) {
+        if (audioPlayer.paused && !ambientNode) {
+          songTitleEl.textContent = '🟢 Spotify Terhubung (Dijeda)';
+          visualizer.classList.remove('playing');
+        }
+      }
+    });
+
+    // --- 2. SISTEM SUARA BICARA PASTI NYALA SAAT STARTUP ---
     let soundEnabled = true;
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -654,22 +723,22 @@
     });
 
     const randomQuotes = [
-      { t: 'Tuan udah minum air putih belum? Kesehatan nomor satu lho! 💧', m: 'wink' },
+      { t: 'Mataku sekarang selalu memperhatikan ke mana kursor Tuan pergi! 👀', m: 'wink' },
+      { t: 'Tuan bisa langsung kontrol lagu Spotify dari kapsulku lho! 🟢', m: 'happy' },
+      { t: 'Tuan udah minum air putih belum? Kesehatan nomor satu lho! 💧', m: 'love' },
       { t: 'Coba buka VS Code atau Word Tuan, ada misi kultivasi berhadiah EXP! ⚔️', m: 'cyber' },
-      { t: 'Tuan bisa ubah bentuk mataku di tab Ngoding lho! 🧬', m: 'happy' },
-      { t: 'Kalau aku menghalangi layar, tekan Alt + X aja ya Tuan! 👻', m: 'love' },
-      { t: 'Semangat terus Tuan! Kultivasi kita makin tinggi hari ini! 🌟', m: 'shock' }
+      { t: 'Kalau aku menghalangi layar, tekan Alt + X aja ya Tuan! 👻', m: 'shock' }
     ];
     function randomTalk() {
       const pick = randomQuotes[Math.floor(Math.random() * randomQuotes.length)];
       nusaSpeak(pick.t, pick.m, true);
     }
 
-    // --- 2. MISI KULTIVASI OTOMATIS (DETEKTOR APLIKASI WINDOWS) ---
+    // --- 3. MISI KULTIVASI OTOMATIS ---
     const defaultQuests = [
       { id: 'vscode', title: '💻 Buka aplikasi VS Code (Ngoding)', exp: 60, done: false },
       { id: 'word', title: '📄 Buka Word / WPS Office (Nugas)', exp: 50, done: false },
-      { id: 'media', title: '🎬 Buka Browser / Nonton Hiburan', exp: 40, done: false },
+      { id: 'media', title: '🎬 Buka Spotify / Browser Hiburan', exp: 40, done: false },
       { id: 'timer', title: '⏱️ Selesaikan 1 Sesi Timer Fokus', exp: 50, done: false },
       { id: 'selfcode', title: '🧬 Modifikasi Kode Tubuh Nusa', exp: 45, done: false }
     ];
@@ -707,9 +776,7 @@
     }
 
     window.manualCompleteQuest = (idx) => {
-      if (!quests[idx].done) {
-        completeQuestById(quests[idx].id);
-      }
+      if (!quests[idx].done) completeQuestById(quests[idx].id);
     };
 
     window.resetDailyQuests = () => {
@@ -720,18 +787,12 @@
     };
 
     ipcRenderer.on('running-apps', (e, apps) => {
-      if (apps.vscode) {
-        completeQuestById('vscode', 'Wah Tuan membuka VS Code! Misi Ngoding selesai, +60 EXP! Semangat ngodingnya Tuan! 💻');
-      }
-      if (apps.word) {
-        completeQuestById('word', 'Tuan membuka aplikasi dokumen! Misi Cendekiawan selesai, +50 EXP! 📄');
-      }
-      if (apps.media) {
-        completeQuestById('media', 'Misi Kultivasi Hiburan terdeteksi selesai! +40 EXP untuk Tuan! 🎬');
-      }
+      if (apps.vscode) completeQuestById('vscode', 'Wah Tuan membuka VS Code! Misi Ngoding selesai, +60 EXP! 💻');
+      if (apps.word) completeQuestById('word', 'Tuan membuka aplikasi dokumen! Misi Cendekiawan selesai, +50 EXP! 📄');
+      if (apps.media) completeQuestById('media', 'Misi Kultivasi Hiburan selesai! +40 EXP untuk Tuan! 🎬');
     });
 
-    // --- 3. FITUR SELF-CODING (NUSA NGODING DIRINYA SENDIRI) ---
+    // --- 4. FITUR SELF-CODING ---
     const selfCodeInput = document.getElementById('selfCodeInput');
     const selfCustomStyle = document.getElementById('selfCustomStyle');
 
@@ -767,7 +828,7 @@
       applySelfCode(presetName !== 'reset');
     }
 
-    // --- 4. LEVEL KULTIVASI & AURA ---
+    // --- 5. LEVEL KULTIVASI & AURA ---
     let exp = parseInt(localStorage.getItem('nusa_exp') || '0');
     const realms = [
       { name: '⚔️ Mortal', aura: 'linear-gradient(90deg, #00f2fe, #4facfe, #38ef7d)' },
@@ -801,7 +862,7 @@
     }
     updateCultivationUI();
 
-    // --- 5. ANTI-PENGHALANG, HOVER DELAY, MOOD & AUTO-START ---
+    // --- 6. ANTI-PENGHALANG, HOVER DELAY, MOOD & AUTO-START ---
     let hoverTimer = null;
     let isPinned = false;
 
@@ -817,7 +878,6 @@
       clearTimeout(hoverTimer);
       island.classList.remove('expanded');
       if (!isPinned) ipcRenderer.send('set-ignore-mouse', true);
-      eyesBox.style.transform = `translate(0px, 0px)`;
     });
 
     function triggerGhost() { ipcRenderer.send('activate-ghost'); }
@@ -862,7 +922,7 @@
       localStorage.setItem('nusa_autostart', autoStart);
       autoStartBtn.classList.toggle('active-toggle', autoStart);
       ipcRenderer.send('toggle-autostart', autoStart);
-      nusaSpeak(autoStart ? 'Auto-Start aktif! Aku akan menyapa Tuan saat Windows nyala! ⚡' : 'Auto-Start dimatikan Tuan.', 'happy', true);
+      nusaSpeak(autoStart ? 'Auto-Start diperbaiki & aktif! Aman saat Windows nyala! ⚡' : 'Auto-Start dimatikan Tuan.', 'happy', true);
     });
 
     document.getElementById('sfxBtn').addEventListener('click', (e) => {
@@ -895,23 +955,12 @@
       }
     });
 
-    document.addEventListener('mousemove', (e) => {
-      const rect = notch.getBoundingClientRect();
-      const dx = Math.max(-10, Math.min(10, (e.clientX - (rect.left + rect.width / 2)) / 12));
-      const dy = Math.max(-5, Math.min(5, (e.clientY - (rect.top + rect.height / 2)) / 12));
-      eyesBox.style.transform = `translate(${dx}px, ${dy}px)`;
-    });
-
+    // Kedip sebelah otomatis sesekali
     setInterval(() => {
-      if (!island.matches(':hover') && !isPinned) {
-        const rx = (Math.random() - 0.5) * 16;
-        eyesBox.style.transform = `translate(${rx}px, 0px)`;
-        const rand = Math.random();
-        if (rand > 0.75) setExpression('wink', 700);
-        else if (rand > 0.55) setExpression('happy', 900);
-        setTimeout(() => eyesBox.style.transform = `translate(0px, 0px)`, 1100);
+      if (!island.matches(':hover') && !isPinned && Math.random() > 0.72) {
+        setExpression('wink', 650);
       }
-    }, 4000);
+    }, 5000);
 
     function switchTab(tabName, btn) {
       playSfx('click');
@@ -921,7 +970,7 @@
       btn.classList.add('active');
     }
 
-    // --- 6. RAM, BATERAI, MUSIK, LO-FI, FILE, CLIPBOARD, TIMER & WISHLIST ---
+    // --- 7. RAM, BATERAI, MUSIK MP3, LO-FI, FILE, CLIPBOARD, TIMER & WISHLIST ---
     let highRamWarned = false;
     ipcRenderer.on('system-stats', (e, stats) => {
       ramBadge.textContent = `🧠 ${stats.ram}%`;
@@ -959,8 +1008,8 @@
 
       if (currentAmbient === type) {
         currentAmbient = null;
-        document.getElementById('visualizer').classList.remove('playing');
-        document.getElementById('songTitle').textContent = 'Suara fokus dihentikan';
+        visualizer.classList.remove('playing');
+        songTitleEl.textContent = 'Suara fokus dihentikan';
         return;
       }
       currentAmbient = type;
@@ -983,23 +1032,22 @@
       ambientNode.start(0);
 
       document.getElementById(type === 'rain' ? 'rainBtn' : 'zenBtn').classList.add('active-toggle');
-      document.getElementById('visualizer').classList.add('playing');
-      document.getElementById('songTitle').textContent = type === 'rain' ? '🌧️ Memutar Suara Hujan Fokus...' : '🌊 Memutar Deep Zen Meditasi...';
+      visualizer.classList.add('playing');
+      songTitleEl.textContent = type === 'rain' ? '🌧️ Memutar Suara Hujan Fokus...' : '🌊 Memutar Deep Zen Meditasi...';
     }
 
     const audioInput = document.getElementById('audioInput');
     const audioPlayer = document.getElementById('audioPlayer');
     const playPauseBtn = document.getElementById('playPauseBtn');
-    const visualizer = document.getElementById('visualizer');
 
     audioInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
         if (ambientNode) toggleAmbient(currentAmbient);
-        document.getElementById('songTitle').textContent = file.name;
+        songTitleEl.textContent = '🎵 MP3: ' + file.name;
         audioPlayer.src = URL.createObjectURL(file);
         audioPlayer.play();
-        playPauseBtn.textContent = '⏸ Pause';
+        playPauseBtn.textContent = '⏸ MP3';
         visualizer.classList.add('playing');
       }
     });
@@ -1007,8 +1055,8 @@
     function toggleMusic() {
       playSfx('click');
       if (!audioPlayer.src) { audioInput.click(); return; }
-      if (audioPlayer.paused) { audioPlayer.play(); playPauseBtn.textContent = '⏸ Pause'; visualizer.classList.add('playing'); }
-      else { audioPlayer.pause(); playPauseBtn.textContent = '▶ Play'; visualizer.classList.remove('playing'); }
+      if (audioPlayer.paused) { audioPlayer.play(); playPauseBtn.textContent = '⏸ MP3'; visualizer.classList.add('playing'); }
+      else { audioPlayer.pause(); playPauseBtn.textContent = '▶ MP3'; visualizer.classList.remove('playing'); }
     }
 
     function toggleFileClip(mode) {
@@ -1122,7 +1170,9 @@
       rec.onresult = (ev) => {
         const cmd = ev.results[0][0].transcript.toLowerCase();
         document.getElementById('voiceCmdBtn').classList.remove('active-toggle');
-        if (cmd.includes('sharingan')) applyPreset('sharingan');
+        if (cmd.includes('spotify')) spotifyCmd('open');
+        else if (cmd.includes('lanjut') || cmd.includes('next')) spotifyCmd('next');
+        else if (cmd.includes('sharingan')) applyPreset('sharingan');
         else if (cmd.includes('kucing')) applyPreset('cat');
         else if (cmd.includes('hujan')) toggleAmbient('rain');
         else nusaSpeak(`Tuan bilang: "${cmd}" — Siap! ✨`, 'happy', true);
